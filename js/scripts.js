@@ -1,3 +1,5 @@
+// Reg or auth
+
 let buttons = document.querySelectorAll('.btnRegAuth');
 buttons.forEach((item) => {
     item.addEventListener('click', (e) => {
@@ -26,9 +28,11 @@ buttons.forEach((item) => {
                     ajax('scripts/reg.php', 'POST', regResult, data);
 
                     function regResult(result) {
-                        console.log(result);
-
-                        document.cookie = 'name=name';
+                        if( result == 'Всё заебись' ) {
+                            location.reload();
+                        } else {
+                            alert(result);
+                        }
                     }
                 })
             }
@@ -48,7 +52,6 @@ buttons.forEach((item) => {
 
                     function authResult(result) {
                         if(result == '1') {
-                            document.cookie = 'name=name';
                             location.reload();
                         } else {
                             alert('Такого пользователя нет!');
@@ -60,9 +63,53 @@ buttons.forEach((item) => {
     })
 })
 
+// Logout
+
 let exitProfile = document.querySelector('#exit');
 
 exitProfile.addEventListener('click', () => {
-    document.cookie = "name=;expires=15/02/2003";
-    location.reload();
+    ajax('scripts/logout.php', 'POST', logoutResult, {'logout':true});
+
+    function logoutResult(result) {
+        if(result == '1') {
+            location.reload();
+        }
+    }
+});
+
+// Add article
+
+let formAddArticle = document.querySelector('#form_add_article');
+
+formAddArticle.querySelector('.add-article__submit').addEventListener('click', (e) => {
+    e.preventDefault();
+    let title = formAddArticle.querySelector('.add-article__title').value,
+        text = formAddArticle.querySelector('.add-article__text').value,
+        image = formAddArticle.querySelector('.add-article__file input')
+
+    let data = {
+        title: title,
+        text: text,
+        image: image
+    }
+
+    console.log(data);
+});
+
+// Вывод превью загруженной картинки
+
+let inputFile = formAddArticle.querySelector('.add-article__file input');
+
+inputFile.addEventListener('change', function() {
+    if (this.files[0]) {
+        var fr = new FileReader();
+    
+        fr.addEventListener("load", function () {
+          formAddArticle.querySelector('.add-article__file').innerHTML = `<img src="${fr.result}" alt="">`;
+        }, false);
+    
+        fr.readAsDataURL(this.files[0]);
+      }
+        
+    
 });

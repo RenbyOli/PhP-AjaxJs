@@ -10,6 +10,17 @@ if( (isset($_POST['login'])) && (isset($_POST['pass'])) ) {
 	$result_arr = mysqli_fetch_assoc(mysqli_query( $connect, $query ) );
 	
 	if(password_verify($user_pass, $result_arr['user_pass'])) {
+		session_start();
+		$_SESSION['user_id'] = $result_arr['user_id'];
+		// $_SESSION['user_name'] = $result_arr['user_name'];
+		// $session_key = generateSalt();
+
+		// setcookie('login', $result_arr['user_name'], time()+60*60*24*30);
+		// setcookie('key', $session_key, time()+60*60*24*30);
+
+		// $query = 'UPDATE users SET cookie="'.$session_key.'" WHERE user_name="'.$result_arr['user_name'].'"';
+		// mysqli_query($connect, $query);
+
 		echo '1';
 	} else {
 		echo "2";

@@ -12,7 +12,7 @@ if( (isset($_POST['new_login'])) && (isset($_POST['new_pass'])) ) {
     $result_arr = mysqli_fetch_assoc(mysqli_query( $connect, $query ) );
 
     if( !isset($result_arr) ) {
-        $reg_query = "INSERT INTO users VALUES (NULL, '".$new_user_login."', '".$new_user_pass."', '0', '".$new_user_date."', 'user')";
+        $reg_query = "INSERT INTO users VALUES (NULL, '".$new_user_login."', '".$new_user_pass."', '".$new_user_date."', 'user')";
         $result = mysqli_query($connect, $reg_query);
         echo "Всё заебись";
     } else {
