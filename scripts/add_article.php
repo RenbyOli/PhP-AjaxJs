@@ -1,13 +1,23 @@
-<form action="/" class="add-article" id="form_add_article">
-    <div class="add-article__left">
-        <label class="add-article__file">
-            <input type="file" name="preview_new_article">
-            Добавьте изображение для статьи, пожалуста блять.
-        </label>
-    </div>
-    <div class="add-article__right">
-        <input class="add-article__title" type="text" name="title_new_article" placeholder="Название статьи">
-        <textarea class="add-article__text" name="text_new_article" placeholder="Введите текст статьи"></textarea>
-        <button type="submit" class="add-article__submit">Add article</button>
-    </div>
-</form>
+<?php
+
+$connect = mysqli_connect('localhost', 'root', '', 'php_test') or die('Пипец: '.mysqli_error());
+
+if( (!empty($_FILES['preview_new_article'])) && (!empty($_POST['title_new_article'])) && (!empty($_POST['text_new_article'])) ) {
+    $photo_article = $_FILES['preview_new_article'];
+
+    $relative_path = '/article/' . $photo_article['name'];
+    $tempName = $photo_article['tmp_name'];
+    $destName = $_SERVER['DOCUMENT_ROOT'] . $relative_path;
+    move_uploaded_file($tempName, $destName);
+    
+    $title_article = trim($_POST['title_new_article']);
+    $text_article = trim($_POST['text_new_article']);
+    $date_article = date('Y-m-d H:i:s');
+
+    $query = "INSERT INTO articles VALUES (NULL, '".$title_article."', '".$text_article."', '".$relative_path."', '".$date_article."')";
+    $result = mysqli_query($connect, $query);
+
+    echo $result;
+} else {
+    echo 'Стоп, что то тут не чисто!';
+}

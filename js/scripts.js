@@ -4,11 +4,11 @@ let buttons = document.querySelectorAll('.btnRegAuth');
 buttons.forEach((item) => {
     item.addEventListener('click', (e) => {
         event.preventDefault();
-        let data = {
-            "name": item.id,
-        }
+        let formData = new FormData();
+
+        formData.append('name', item.id);
     
-        ajax('scripts/reg_or_auth.php', 'POST', login, data);
+        ajax('scripts/reg_or_auth.php', 'POST', login, formData);
     
         function login(result) {
             document.querySelector('#form').innerHTML = result;
@@ -19,13 +19,12 @@ buttons.forEach((item) => {
                     e.preventDefault();
                     let login = document.querySelector('#new_login').value,
                         pass = document.querySelector('#new_pass').value;
+                        let formData = new FormData();
 
-                    let data = {
-                        'new_login': login,
-                        'new_pass': pass,
-                    }
+                        formData.append('new_login', login);
+                        formData.append('new_pass', pass);
 
-                    ajax('scripts/reg.php', 'POST', regResult, data);
+                    ajax('scripts/reg.php', 'POST', regResult, formData);
 
                     function regResult(result) {
                         if( result == 'Всё заебись' ) {
@@ -42,13 +41,12 @@ buttons.forEach((item) => {
                     e.preventDefault();
                     let login = document.querySelector('#login').value,
                         pass = document.querySelector('#pass').value;
+                    let formData = new FormData();
 
-                    let data = {
-                        'login': login,
-                        'pass': pass,
-                    }
+                    formData.append('login', login);
+                    formData.append('pass', pass);
 
-                    ajax('scripts/auth.php', 'POST', authResult, data);
+                    ajax('scripts/auth.php', 'POST', authResult, formData);
 
                     function authResult(result) {
                         if(result == '1') {
@@ -66,50 +64,80 @@ buttons.forEach((item) => {
 // Logout
 
 let exitProfile = document.querySelector('#exit');
-
-exitProfile.addEventListener('click', () => {
-    ajax('scripts/logout.php', 'POST', logoutResult, {'logout':true});
-
-    function logoutResult(result) {
-        if(result == '1') {
-            location.reload();
+if(exitProfile !== null) {
+    exitProfile.addEventListener('click', () => {
+        let formData = new FormData();
+        formData.append('logout', true);
+        ajax('scripts/logout.php', 'POST', logoutResult, formData);
+    
+        function logoutResult(result) {
+            if(result == '1') {
+                location.reload();
+            }
         }
-    }
-});
+    });
+}
 
 // Add article
 
 let formAddArticle = document.querySelector('#form_add_article');
 
-formAddArticle.querySelector('.add-article__submit').addEventListener('click', (e) => {
-    e.preventDefault();
-    let title = formAddArticle.querySelector('.add-article__title').value,
-        text = formAddArticle.querySelector('.add-article__text').value,
-        image = formAddArticle.querySelector('.add-article__file input')
+if(formAddArticle !== null) {
+    formAddArticle.querySelector('.add-article__submit').addEventListener('click', (e) => {
+        e.preventDefault();
+    
+        let formData = new FormData(formAddArticle);
+    
+        ajax('scripts/add_article.php', 'POST', addArtResult, formData);
+    
+        function addArtResult(result) {
+            location.reload();
+        }
+    });
+}
 
-    let data = {
-        title: title,
-        text: text,
-        image: image
-    }
+//Delete article
 
-    console.log(data);
+let removeButtonArticle = document.querySelectorAll('.article_delete');
+
+removeButtonArticle.forEach((item, i) => {
+    item.addEventListener('click', () => {
+        let idArticle = item.id.split('_');
+        idArticle = idArticle[idArticle.length - 1]
+        let data = new FormData();
+
+        data.append('id', idArticle);
+
+        ajax('scripts/delete_article.php', 'POST', delArtResult, data);
+
+        function delArtResult(result) {
+            console.log(result);
+            location.reload();
+        }
+    });
 });
 
 // Вывод превью загруженной картинки
 
-let inputFile = formAddArticle.querySelector('.add-article__file input');
+if(formAddArticle !== null) {
+    let inputFile = formAddArticle.querySelector('.add-article__file input');
 
-inputFile.addEventListener('change', function() {
-    if (this.files[0]) {
-        var fr = new FileReader();
-    
-        fr.addEventListener("load", function () {
-          formAddArticle.querySelector('.add-article__file').innerHTML = `<img src="${fr.result}" alt="">`;
-        }, false);
-    
-        fr.readAsDataURL(this.files[0]);
-      }
+    inputFile.addEventListener('change', function() {
+        if (this.files[0]) {
+            let fr = new FileReader();
+            let articleImage = document.createElement('img');
+            articleImage.classList.add('add-article__preview-photo');
         
-    
-});
+            fr.addEventListener("load", function () {
+                if(formAddArticle.querySelector('.add-article__preview-photo') !== null) {
+                    formAddArticle.querySelector('.add-article__preview-photo').setAttribute('src', fr.result);
+                } else {
+                    articleImage.setAttribute('src', fr.result);
+                    formAddArticle.querySelector('.add-article__file').appendChild(articleImage);
+                }
+            }, false);
+        
+            fr.readAsDataURL(this.files[0]);
+          }
+    });
+}

@@ -16,6 +16,7 @@ body {
 
 .header {
     position: fixed;
+    z-index: 5000;
     top: 0;
     right: 0;
     left: 0;
@@ -124,7 +125,7 @@ body {
 }
 
 .articles {
-    margin: 50px -10px -10px;
+    margin: 0 -10px -10px;
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
@@ -138,6 +139,7 @@ body {
     padding: 10px;
     cursor: pointer;
     transition: cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.2s;
+    position: relative;
 }
 
 .article:hover {
@@ -174,9 +176,25 @@ body {
     margin-top: 15px;
 }
 
+.article_delete {
+    position: absolute;
+    padding: 10px;
+    top: 5px;
+    right: 5px;
+    color: #fff;
+    background-color: rgba(197, 0, 0, 0.733);
+    cursor: pointer;
+    transition: linear 0.4s;
+}
+
+.article_delete:hover {
+    transform: rotate3d(0, 1, 0, 360deg);
+}
+
 .add-article {
     display: flex;
     justify-content: space-between;
+    margin-top: 50px;
 }
 
 .add-article__left {
