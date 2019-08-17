@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 $connect = mysqli_connect('localhost', 'root', '', 'php_test') or die('Пипец: '.mysqli_error());
 
@@ -14,10 +15,15 @@ if( (!empty($_FILES['preview_new_article'])) && (!empty($_POST['title_new_articl
     $text_article = trim($_POST['text_new_article']);
     $date_article = date('Y-m-d H:i:s');
 
-    $query = "INSERT INTO articles VALUES (NULL, '".$title_article."', '".$text_article."', '".$relative_path."', '".$date_article."')";
+    $query_user_name = "SELECT * FROM `users` WHERE user_id='" . $_SESSION['user_id'] . "'";
+    $result_user_name = mysqli_fetch_assoc(mysqli_query($connect, $query_user_name));
+
+    $user_name = $result_user_name['user_name'];
+
+    $query = "INSERT INTO articles VALUES (NULL, '".$title_article."', '".$text_article."', '".$relative_path."', '".$date_article."' , '".$user_name."')";
     $result = mysqli_query($connect, $query);
 
-    echo $result;
+    echo 1;
 } else {
-    echo 'Стоп, что то тут не чисто!';
+    echo 0;
 }

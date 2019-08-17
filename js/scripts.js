@@ -91,14 +91,18 @@ if(formAddArticle !== null) {
         ajax('scripts/add_article.php', 'POST', addArtResult, formData);
     
         function addArtResult(result) {
-            location.reload();
+            if(result == 1) {
+                location.reload();
+            } else {
+                alert(result);
+            }
         }
     });
 }
 
 //Delete article
 
-let removeButtonArticle = document.querySelectorAll('.article_delete');
+let removeButtonArticle = document.querySelectorAll('.article__delete');
 
 removeButtonArticle.forEach((item, i) => {
     item.addEventListener('click', () => {
