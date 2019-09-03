@@ -18,11 +18,8 @@ buttons.forEach((item) => {
                 reg.addEventListener('click', (e) => {
                     e.preventDefault();
                     let login = document.querySelector('#new_login').value,
-                        pass = document.querySelector('#new_pass').value;
-                        let formData = new FormData();
-
-                        formData.append('new_login', login);
-                        formData.append('new_pass', pass);
+                        pass = document.querySelector('#new_pass').value,
+                        formData = new FormData(document.querySelector('#form > form'));
 
                     ajax('scripts/reg.php', 'POST', regResult, formData);
 
