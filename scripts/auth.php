@@ -1,17 +1,17 @@
 <?php
 
-$connect = mysqli_connect('localhost', 'root', '', 'php_test') or die('Пипец: '.mysqli_error());
+$connect = mysqli_connect('localhost', 'root', '', 'renby') or die('Пипец: '.mysqli_error());
 
 $user_login = $_POST['login'];
 $user_pass = $_POST['pass'];
 
 if( (isset($_POST['login'])) && (isset($_POST['pass'])) ) {
-	$query = "SELECT * FROM users WHERE user_name = '" . $user_login . "'";
+	$query = "SELECT * FROM users WHERE login = '" . $user_login . "'";
 	$result_arr = mysqli_fetch_assoc(mysqli_query( $connect, $query ) );
 	
-	if(password_verify($user_pass, $result_arr['user_pass'])) {
+	if(password_verify($user_pass, $result_arr['password'])) {
 		session_start();
-		$_SESSION['user_id'] = $result_arr['user_id'];
+		$_SESSION['user_id'] = $result_arr['id'];
 		// $_SESSION['user_name'] = $result_arr['user_name'];
 		// $session_key = generateSalt();
 

@@ -85,10 +85,11 @@ let formAddArticle = document.querySelector('#form_add_article');
 if(formAddArticle !== null) {
     formAddArticle.querySelector('.add-article__submit').addEventListener('click', (e) => {
         e.preventDefault();
+
+        dropZoneArtcile.datas.append(formAddArticle.querySelector('.add-article__title').name, formAddArticle.querySelector('.add-article__title').value);
+        dropZoneArtcile.datas.append(formAddArticle.querySelector('.add-article__text').name, formAddArticle.querySelector('.add-article__text').value);
     
-        let formData = new FormData(formAddArticle);
-    
-        ajax('scripts/add_article.php', 'POST', addArtResult, formData);
+        ajax('scripts/add_article.php', 'POST', addArtResult, dropZoneArtcile.datas);
     
         function addArtResult(result) {
             if(result == 1) {
@@ -100,7 +101,7 @@ if(formAddArticle !== null) {
     });
 }
 
-//Delete article
+//Delete button article
 
 let removeButtonArticle = document.querySelectorAll('.article__delete');
 
@@ -123,25 +124,91 @@ removeButtonArticle.forEach((item, i) => {
 
 // Вывод превью загруженной картинки
 
-if(formAddArticle !== null) {
-    let inputFile = formAddArticle.querySelector('.add-article__file input');
+class DropDropFck {
+	constructor(dropArea, resultsBlock, cssClassPreviewArticle, maxFilesCount) {
+        this.settings = {
+            dropArea: dropArea,
+            resultsBlock: resultsBlock,
+            cssClassPreviewArticle: cssClassPreviewArticle,
+            maxFilesCount: maxFilesCount
+        };
 
-    inputFile.addEventListener('change', function() {
-        if (this.files[0]) {
-            let fr = new FileReader();
-            let articleImage = document.createElement('img');
-            articleImage.classList.add('add-article__preview-photo');
-        
-            fr.addEventListener("load", function () {
-                if(formAddArticle.querySelector('.add-article__preview-photo') !== null) {
-                    formAddArticle.querySelector('.add-article__preview-photo').setAttribute('src', fr.result);
-                } else {
-                    articleImage.setAttribute('src', fr.result);
-                    formAddArticle.querySelector('.add-article__file').appendChild(articleImage);
-                }
-            }, false);
-        
-            fr.readAsDataURL(this.files[0]);
-          }
-    });
+		this.dropArea = document.querySelector(this.settings.dropArea);
+		this.inputFile = this.dropArea == null ? false : this.dropArea.querySelector('input');
+		this.resultsBlock = document.querySelector(this.settings.resultsBlock);
+		this.j = 0;
+		this.datas = new FormData();
+	}
+
+	addPreviewImage(filesArr) {
+		if(filesArr.files.length + this.resultsBlock.childNodes.length > this.settings.maxFilesCount) {
+			this.inputFile.value = '';
+			console.log('error');
+		} else {
+			for(let i = 0; i < filesArr.files.length; i++) {
+				let fr = new FileReader();
+				fr.readAsDataURL(filesArr.files[i]);
+				fr.addEventListener("load", () => {
+					this.resultsBlock.innerHTML += `<div class="${this.settings.cssClassPreviewArticle}" id="image_${this.j}"><img src="${fr.result}"></div>`;
+					this.datas.append("image_" + this.j, filesArr.files[i]);
+					this.j++;
+				});
+			}
+			console.log('add');
+		}
+	};
+
+	deletePreviewImage(wrapp, datas, j) {
+		if(wrapp !== null) {
+			wrapp.addEventListener('click', (e) => {
+				if(e.target.classList.contains(this.settings.cssClassPreviewArticle)) {
+					e.target.classList.remove(this.settings.cssClassPreviewArticle);
+					e.target.remove();
+					this.datas.delete(e.target.id);
+				} else {
+					return false;
+				}
+			});
+		}
+	};
+
+	init() {
+		if(this.inputFile) {
+			this.inputFile.addEventListener('change', (e) => {
+				this.addPreviewImage(this.inputFile);
+				this.deletePreviewImage(this.resultsBlock, this.datas, this.j);
+			});
+			
+		
+			['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+				this.dropArea.addEventListener(eventName, function (e) {
+					e.preventDefault()
+					e.stopPropagation()
+				}, false);
+			});
+		
+			['dragenter', 'dragover'].forEach(eventName => {
+				this.dropArea.addEventListener(eventName, (e) => {
+					this.dropArea.classList.add('add-article__file--file-active')
+				}, false)
+			});
+		
+			['dragleave', 'drop'].forEach(eventName => {
+				this.dropArea.addEventListener(eventName, (e) => {
+					this.dropArea.classList.remove('add-article__file--file-active')
+				}, false)
+			});
+		
+			this.dropArea.addEventListener('drop', (e) => {
+				if(this.dropArea) {
+					let dt = e.dataTransfer;
+					this.addPreviewImage(dt);
+					this.deletePreviewImage(this.resultsBlock, this.datas, this.j)
+				}
+			}, false);
+		}
+	}
 }
+
+let dropZoneArtcile = new DropDropFck('.add-article__file', '.add-article__result', 'add-article__preview', 1);
+dropZoneArtcile.init();

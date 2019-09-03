@@ -1,23 +1,26 @@
 <?php
 
-session_start();
+include_once 'db.php';
 
-$connect = mysqli_connect('localhost', 'root', '', 'php_test') or die('Пипец: '.mysqli_error());
+$result = $pdo->query('SELECT articles.id as article_id,
+                                articles.image as article_image,
+                                articles.title as article_title,
+                                articles.text as article_text,
+                                articles.date as article_date,
+                                users.login as article_users_login FROM articles INNER JOIN users ON users.id=articles.user_id');
 
-$query = "SELECT * FROM articles";
-$result_arr = mysqli_query($connect, $query);
+$output = '';
 
-echo '<div class="articles">';
-
-while ($row=mysqli_fetch_assoc($result_arr)) {
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     if( isset($_SESSION["user_id"]) ) {
-        echo '<div class="article" id="article_'.$row["article_id"].'">
+
+        $output .= '<div class="article" id="article_'.$row["article_id"].'">
                 <div class="article__card">
                     <div class="article__front" style="background-image:url('.$row["article_image"].')">
                 </div>
                 <div class="article__back">
                     <div class="article__delete" id="delete_article_'.$row["article_id"].'">Удалить</div>
-                    <div class="article__author">'.$row["user_article"].'</div>
+                    <div class="article__author">'.$row["article_users_login"].'</div>
                     <div class="article__title">'.$row["article_title"].'</div>
                     <div class="article__description">'.$row["article_text"].'</div>
                     <div class="article__date">'.$row["article_date"].'</div>
@@ -25,12 +28,12 @@ while ($row=mysqli_fetch_assoc($result_arr)) {
             </div>
         </div>';
     } else {
-        echo '<div class="article" id="article_'.$row["article_id"].'">
+        $output .= '<div class="article" id="article_'.$row["article_id"].'">
                 <div class="article__card">
                     <div class="article__front" style="background-image:url('.$row["article_image"].')">
                 </div>
                 <div class="article__back">
-                    <div class="article__author">'.$row["user_article"].'</div>
+                    <div class="article__author">'.$row["article_users_login"].'</div>
                     <div class="article__title">'.$row["article_title"].'</div>
                     <div class="article__description">'.$row["article_text"].'</div>
                     <div class="article__date">'.$row["article_date"].'</div>
@@ -40,4 +43,4 @@ while ($row=mysqli_fetch_assoc($result_arr)) {
     }
 }
 
-echo '</div>';
+echo $output;

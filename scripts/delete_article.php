@@ -1,6 +1,5 @@
 <?php
 
-$connect = mysqli_connect('localhost', 'root', '', 'php_test') or die('Пипец: '.mysqli_error());
+include_once 'db.php';
 
-$query ="DELETE FROM articles WHERE article_id = '".$_POST['id']."'";
-$result = mysqli_query($connect, $query);
+$query = $pdo->query("DELETE FROM articles WHERE id = '".$_POST['id']."'");
