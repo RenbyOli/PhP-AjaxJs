@@ -1,5 +1,7 @@
 <?php
 session_start();
+
+include_once('scripts/db.php');
 ?>
 
 <!DOCTYPE html>
@@ -18,13 +20,22 @@ session_start();
 			<div class="header__form" id="form">
 				<?php
 
-				if( isset($_SESSION['user_id']) ) {
-					echo '<button class="btn-exit" id="exit">Exit</button>';
+				if(!empty($_COOKIE['auth_token'])) {
+					$user_id_from_token = explode('_', $_COOKIE['auth_token']);
+	
+					$query = $pdo->query("SELECT * FROM users WHERE id = '" . $user_id_from_token . "'");
+					$result_arr = $query->fetch(PDO::FETCH_ASSOC);
+	
+					if( $result_arr['cookie'] ==  $_COOKIE['auth_token']) {
+						echo '<button class="btn-exit" id="exit">Exit</button>';
+					} else {
+						echo 'Неправильный авторизацинный токен!';
+					}
 				} else {
 					echo '<div class="header__buttons">
-						<button class="btnRegAuth" id="reg">Reg</button>
-						<button class="btnRegAuth" id="auth">Auth</button>
-					</div>';
+							<button class="btnRegAuth" id="reg">Reg</button>
+							<button class="btnRegAuth" id="auth">Auth</button>
+						</div>';
 				}
 				
 				?>

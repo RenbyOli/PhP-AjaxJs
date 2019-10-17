@@ -37,11 +37,13 @@ buttons.forEach((item) => {
                 auth.addEventListener('click', (e) => {
                     e.preventDefault();
                     let login = document.querySelector('#login').value,
-                        pass = document.querySelector('#pass').value;
+                        pass = document.querySelector('#pass').value,
+                        remember_me = document.querySelector('#remember_me').value;
                     let formData = new FormData();
 
                     formData.append('login', login);
                     formData.append('pass', pass);
+                    formData.append('remember_me', remember_me);
 
                     ajax('scripts/auth.php', 'POST', authResult, formData);
 

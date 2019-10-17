@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include_once 'db.php';
+include_once('db.php');
 
 if( (!empty($_POST['title_new_article'])) && (!empty($_POST['text_new_article'])) ) {
     

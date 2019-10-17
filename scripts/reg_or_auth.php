@@ -10,6 +10,7 @@ if($_POST['name'] == 'reg') {
 	echo '<form action="/" method="post">
             <input id="login" type="text" name="login" placeholder="Name">
             <input id="pass" type="password" name="pass" placeholder="Password">
+            <label><input type="checkbox" name="remember_me" id="remember_me">Запомнить меня!</label>
             <button id="auth_user" type="submit" name="auth">Auth</button>
         </form>';
 }

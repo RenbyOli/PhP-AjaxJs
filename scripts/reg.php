@@ -1,6 +1,6 @@
 <?php
 
-include_once 'db.php';
+include_once('db.php');
 
 $new_user_login = $_POST['new_login'];
 $new_user_pass = password_hash($_POST['new_pass'], PASSWORD_DEFAULT);

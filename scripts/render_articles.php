@@ -1,6 +1,6 @@
 <?php
 
-include_once 'db.php';
+include_once('db.php');
 
 $result = $pdo->query('SELECT articles.id as article_id,
                                 articles.image as article_image,
@@ -12,7 +12,7 @@ $result = $pdo->query('SELECT articles.id as article_id,
 $output = '';
 
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-    if( isset($_SESSION["user_id"]) ) {
+    if( isset($_COOKIE["auth_token"]) ) {
 
         $output .= '<div class="article" id="article_'.$row["article_id"].'">
                 <div class="article__card">
